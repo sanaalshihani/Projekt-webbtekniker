@@ -46,7 +46,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Weather App</h1>
+      <h1>Find the average temperature in a city</h1>
       <SearchBar onSearch={getWeather} />
       <WeatherDisplay weatherData={weatherData} />
       <SavedSearches savedSearches={savedSearches} onSelect={getWeather} />
