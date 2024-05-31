@@ -8,7 +8,7 @@ import './index.css';
 const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [savedSearches, setSavedSearches] = useState([]);
-  const [favorites, setFavorites] = useState([]); // Se till att favorites är definierat här
+  const [favorites, setFavorites] = useState([]);
   const [isCelsius, setIsCelsius] = useState(true);
 
   const getCityCoordinates = async (city) => {
@@ -30,16 +30,19 @@ const App = () => {
           latitude: cityData.latitude,
           longitude: cityData.longitude,
           hourly: 'temperature_2m',
+          current_weather: true,
         },
       });
 
       const temperature = isCelsius ? response.data.hourly.temperature_2m[0] : celsiusToFahrenheit(response.data.hourly.temperature_2m[0]);
+      const weatherCondition = response.data.current_weather.weathercode;
 
       setWeatherData({
         city: cityData.name,
         temperature: temperature,
+        condition: weatherCondition,
       });
-      
+
       if (!savedSearches.includes(city)) {
         setSavedSearches([...savedSearches, city]);
       }
@@ -70,21 +73,20 @@ const App = () => {
     setFavorites(favorites.filter(fav => fav !== city));
   };
 
-
   return (
-    <div>
+    <div className="container">
       <h1>Find the average temperature in a city, town or place</h1>
       <button onClick={toggleTemperatureUnit}>{isCelsius ? 'Visa i Fahrenheit' : 'Visa i Celsius'}</button>
       <SearchBar onSearch={getWeather} />
       <WeatherDisplay weatherData={weatherData} isCelsius={isCelsius} onAddFavorite={addFavorite} />
       <SavedSearches savedSearches={savedSearches} onSelect={getWeather} onRemove={removeSavedSearch} />
-      <div class="favorites">
+      <div className="favorites">
         <h2>Favorites</h2>
         <ul>
           {favorites.map((city, index) => (
             <li key={index}>
               <img src="./images/star.png" height="20px" alt="Star Icon" className="star-icon" /> {city}
-              <button onClick={() => removeFavorite(city)}>Remove</button>
+              <button className="remove-btn" onClick={() => removeFavorite(city)}>Remove</button>
             </li>
           ))}
         </ul>
@@ -94,3 +96,4 @@ const App = () => {
 };
 
 export default App;
+
