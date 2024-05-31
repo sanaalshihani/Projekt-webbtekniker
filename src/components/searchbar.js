@@ -17,9 +17,12 @@ const SearchBar = ({ onSearch }) => {
         onChange={(e) => setCity(e.target.value)}
         placeholder="Enter city"
       />
+      <div class="search-button">
       <button type="submit">Search</button>
+      </div>
     </form>
   );
 };
 
 export default SearchBar;
+

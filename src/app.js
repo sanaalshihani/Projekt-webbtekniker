@@ -8,7 +8,7 @@ import './index.css';
 const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [savedSearches, setSavedSearches] = useState([]);
-  const [favorites, setFavorites] = useState([]); // Se till att favorites är definierat här
+  const [favorites, setFavorites] = useState([]);
   const [isCelsius, setIsCelsius] = useState(true);
 
   const getCityCoordinates = async (city) => {
@@ -30,16 +30,22 @@ const App = () => {
           latitude: cityData.latitude,
           longitude: cityData.longitude,
           hourly: 'temperature_2m',
+          current_weather: true,
         },
       });
 
-      const temperature = isCelsius ? response.data.hourly.temperature_2m[0] : celsiusToFahrenheit(response.data.hourly.temperature_2m[0]);
+      const temperatures = response.data.hourly.temperature_2m;
+      const currentTemperature = response.data.current_weather.temperature;
+      const weatherCondition = response.data.current_weather.weathercode;
+      const averageTemperature = temperatures.reduce((sum, temp) => sum + temp, 0) / temperatures.length;
 
       setWeatherData({
         city: cityData.name,
-        temperature: temperature,
+        currentTemperature: isCelsius ? currentTemperature : celsiusToFahrenheit(currentTemperature),
+        averageTemperature: isCelsius ? averageTemperature : celsiusToFahrenheit(averageTemperature),
+        weatherCondition,
       });
-      
+
       if (!savedSearches.includes(city)) {
         setSavedSearches([...savedSearches, city]);
       }
@@ -50,10 +56,21 @@ const App = () => {
 
   const toggleTemperatureUnit = () => {
     setIsCelsius(!isCelsius);
+    if (weatherData) {
+      setWeatherData({
+        ...weatherData,
+        currentTemperature: isCelsius ? celsiusToFahrenheit(weatherData.currentTemperature) : fahrenheitToCelsius(weatherData.currentTemperature),
+        averageTemperature: isCelsius ? celsiusToFahrenheit(weatherData.averageTemperature) : fahrenheitToCelsius(weatherData.averageTemperature),
+      });
+    }
   };
 
   const celsiusToFahrenheit = (celsius) => {
     return (celsius * 9 / 5) + 32;
+  };
+
+  const fahrenheitToCelsius = (fahrenheit) => {
+    return (fahrenheit - 32) * 5 / 9;
   };
 
   const removeSavedSearch = (city) => {
@@ -70,21 +87,22 @@ const App = () => {
     setFavorites(favorites.filter(fav => fav !== city));
   };
 
-
   return (
-    <div>
-      <h1>Find the average temperature in a city, town or place</h1>
-      <button onClick={toggleTemperatureUnit}>{isCelsius ? 'Visa i Fahrenheit' : 'Visa i Celsius'}</button>
+    <div className="container">
+      <h1>Find the current and average temperature in a city, town or place</h1>
+      <div class="change-temp-btn">
+      <button onClick={toggleTemperatureUnit}>{isCelsius ? 'Fahrenheit' : 'Celsius'}</button>
+      </div>
       <SearchBar onSearch={getWeather} />
       <WeatherDisplay weatherData={weatherData} isCelsius={isCelsius} onAddFavorite={addFavorite} />
       <SavedSearches savedSearches={savedSearches} onSelect={getWeather} onRemove={removeSavedSearch} />
-      <div class="favorites">
+      <div className="favorites">
         <h2>Favorites</h2>
         <ul>
           {favorites.map((city, index) => (
             <li key={index}>
               <img src="./images/star.png" height="20px" alt="Star Icon" className="star-icon" /> {city}
-              <button onClick={() => removeFavorite(city)}>Remove</button>
+              <button className="remove-btn" onClick={() => removeFavorite(city)}>Remove</button>
             </li>
           ))}
         </ul>
