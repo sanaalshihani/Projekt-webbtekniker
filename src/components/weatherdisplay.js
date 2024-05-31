@@ -1,57 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 const WeatherDisplay = ({ weatherData, isCelsius, onAddFavorite }) => {
-  const [displayedTemperature, setDisplayedTemperature] = useState(null);
+  if (!weatherData) return <p>No data available</p>;
 
-  useEffect(() => {
-    if (weatherData) {
-      const temperature = isCelsius ? weatherData.temperature : celsiusToFahrenheit(weatherData.temperature);
-      setDisplayedTemperature(temperature);
-    }
-  }, [weatherData, isCelsius]);
-
-  const celsiusToFahrenheit = (celsius) => {
-    return (celsius * 9 / 5) + 32;
-  };
-
-  const getWeatherIcon = (condition) => {
-    switch (condition) {
-      case 0:
-        return '☀️'; // Clear sky
-      case 1:
-      case 2:
-      case 3:
-        return '🌤️'; // Partly cloudy
+  const getWeatherIcon = (weatherCode) => {
+    switch (weatherCode) {
+      case 0: return "☀️"; // Clear sky
+      case 1: return "🌤️"; // Mainly clear
+      case 2: return "⛅"; // Partly cloudy
+      case 3: return "☁️"; // Overcast
       case 45:
-      case 48:
-        return '🌫️'; // Fog
+      case 48: return "🌫️"; // Fog and depositing rime fog
       case 51:
       case 53:
-      case 55:
-        return '🌧️'; // Drizzle
+      case 55: return "🌦️"; // Drizzle
+      case 56:
+      case 57: return "🌧️"; // Freezing Drizzle
       case 61:
       case 63:
-      case 65:
-        return '🌧️'; // Rain
+      case 65: return "🌧️"; // Rain
+      case 66:
+      case 67: return "🌨️"; // Freezing Rain
       case 71:
       case 73:
-      case 75:
-        return '❄️'; // Snow
-      case 95:
-        return '⛈️'; // Thunderstorm
-      default:
-        return '🌡️'; // Default weather icon
+      case 75: return "❄️"; // Snow
+      case 77: return "🌨️"; // Snow grains
+      case 80:
+      case 81:
+      case 82: return "🌧️"; // Rain showers
+      case 85:
+      case 86: return "🌨️"; // Snow showers
+      case 95: return "⛈️"; // Thunderstorm
+      case 96:
+      case 99: return "⛈️"; // Thunderstorm with hail
+      default: return "❓"; // Unknown
     }
   };
-
-  if (!weatherData) return <p>No data available</p>;
 
   return (
     <div className="main">
       <h2>{weatherData.city}</h2>
-      <p>Average temperature: {displayedTemperature} {isCelsius ? '°C' : '°F'}</p>
-      <div className="weather-icon">{getWeatherIcon(weatherData.condition)}</div>
+      <p>Current temperature: {weatherData.currentTemperature.toFixed(2)} {isCelsius ? '°C' : '°F'}</p>
+      <p>Average temperature: {weatherData.averageTemperature.toFixed(2)} {isCelsius ? '°C' : '°F'}</p>
+      <p>Weather condition: {getWeatherIcon(weatherData.weatherCondition)}</p>
+      <div class="add_to_favorites_btn">
       <button onClick={() => onAddFavorite(weatherData.city)}>Add to Favorites</button>
+      </div>
     </div>
   );
 };

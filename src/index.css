@@ -183,3 +183,34 @@ input {
     font-size: 14px;
 }
 }
+
+.main {
+  padding-left: 2%;
+
+}
+
+button {
+  margin-left: 0; ;
+}
+
+.search-button button {
+  padding: 12.2%;
+  margin-left: 7.5%;
+}
+
+.change-temp-btn button {
+  background-color: rgb(0, 0, 0);
+  margin-bottom: 2%;
+}
+
+.add_to_favorites_btn button {
+  margin-bottom: 2%;
+}
+
+.remove-btn {
+  margin-left: 1%;
+}
+
+h2 {
+  padding-top: 2%;
+}
