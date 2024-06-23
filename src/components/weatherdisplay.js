@@ -1,4 +1,5 @@
 import React from 'react';
+import ClothingRecommendation from './ClothingRecommendation';
 
 const WeatherDisplay = ({ weatherData, isCelsius, onAddFavorite }) => {
   if (!weatherData) return <p>No data available</p>;
@@ -44,6 +45,8 @@ const WeatherDisplay = ({ weatherData, isCelsius, onAddFavorite }) => {
       <p>Average temperature: {weatherData.averageTemperature.toFixed(2)} {isCelsius ? '°C' : '°F'}</p>
       <p>Weather condition: {getWeatherIcon(weatherData.weatherCondition)}</p>
       <div class="add_to_favorites_btn">
+         {/* Användning av ClothingRecommendation */}
+      <ClothingRecommendation />
       <button onClick={() => onAddFavorite(weatherData.city)}>Add to Favorites</button>
       </div>
     </div>
